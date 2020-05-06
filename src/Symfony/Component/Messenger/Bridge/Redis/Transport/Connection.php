@@ -343,7 +343,9 @@ class Connection
     {
         try {
             $deleted = $this->connection->xack($this->stream, $this->group, [$id]);
-            $deleted = $this->connection->xdel($this->stream, [$id]) && $deleted;
+            if ($this->deleteAfterAck) {
+                $deleted = $this->connection->xdel($this->stream, [$id]) && $deleted;
+            }
         } catch (\RedisException $e) {
             throw new TransportException($e->getMessage(), 0, $e);
         }
